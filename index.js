@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 require('dotenv').config()
@@ -25,6 +25,53 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
+    const bookCollection = client.db('libraryDB').collection('bookCategories');
+    const categoryCollection = client.db('libraryDB').collection('categoriesCollect');
+
+    // get method start 
+    app.get('/book-category', async (req, res) => {
+      try {
+        const result = await bookCollection.find().toArray();
+        res.send(result)
+      }
+      catch (error) {
+        console.log(error);
+      }
+    })
+
+    app.get('/category-collection', async (req, res) => {
+      try {
+        const result = await categoryCollection.find().toArray();
+        res.send(result)
+      }
+      catch (err) {
+        console.log(err);
+      }
+    })
+
+    app.get('/category-collection/:category', async(req,res) => {
+      try{
+        const id = req.params.category;
+        const query = {category: id};
+        const result = await categoryCollection.find(query).toArray();
+        res.send(result)
+      }
+      catch(error){
+        console.log(err);
+      }
+    })
+app.get('/category-collection/:category/:id', async(req,res) => {
+  try{
+    const id = req.params.id;
+    const query = {_id: new ObjectId(id)};
+    const result = await categoryCollection.findOne(query);
+    res.send(result)
+  }
+  catch(error){
+    console.log(error);
+  }
+})
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -37,10 +84,11 @@ run().catch(console.dir);
 
 
 
+
 app.get('/', (req, res) => {
-    res.send("Library managment CRUD is Running.......")
+  res.send("Library managment CRUD is Running.......")
 })
 
 app.listen(port, () => {
-    console.log(`Library management System is Running on port : ${port}`);
+  console.log(`Library management System is Running on port : ${port}`);
 })

@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "thumbnail": "https://i.ibb.co/Sn1P8VK/thriller-typography-book-related-word-text-effect-t-shirt-design-528151-1733.jpg",
+        "category": "thriller"
+    },
+    {
+        "id": 2,
+        "thumbnail": "https://i.ibb.co/kKPwQtP/novel-book-related-word-best-text-effect-t-shirt-design-print-528151-1669.jpg",
+        "category": "novel"
+    },
+    {
+        "id": 3,
+        "thumbnail": "https://i.ibb.co/jD7qZnf/istockphoto-1092170968-2048x2048.jpg",
+        "category": "history"
+    },
+    {
+        "id": 4,
+        "thumbnail": "https://i.ibb.co/PTV6tNC/cb9b6d5a5dcf446d5b75de33fbe55dc2.jpg",
+        "category": "drama"
+    }
+]
