@@ -27,7 +27,6 @@ async function run() {
     // await client.connect();
     const bookCollection = client.db('libraryDB').collection('bookCategories');
     const categoryCollection = client.db('libraryDB').collection('categoriesCollect');
-
     // get method start 
     app.get('/book-category', async (req, res) => {
       try {
@@ -48,29 +47,66 @@ async function run() {
         console.log(err);
       }
     })
+    
+    // app.get('/category-collection/:id', async (req, res) => {
+    //   try {
+    //     const id = req.params.id;
+    //     const query = { _id: new ObjectId(id) };
+    //     console.log('query id ',query);
+    //     const result = await categoryCollection.findOne(query)
+    //     res.send(result)
+    //   }
+    //   catch (error) {
+    //     console.log(error);
+    //   }
+    // })
 
-    app.get('/category-collection/:category', async(req,res) => {
-      try{
-        const id = req.params.category;
-        const query = {category: id};
+
+    app.get('/category-collection/:category', async (req, res) => {
+      try {
+        const category = req.params.category;
+        const query = { category: category };
         const result = await categoryCollection.find(query).toArray();
         res.send(result)
       }
-      catch(error){
+      catch (error) {
+        console.log(error);
+      }
+    })
+
+
+    app.get('/category-collection/:category/:id', async (req, res) => {
+      try {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await categoryCollection.findOne(query);
+        res.send(result)
+      }
+      catch (error) {
+        console.log(error);
+      }
+    })
+
+    // put/patch method start 
+
+    app.put('/category-collection/:category/:id', async(req,res) => {
+      try{
+        const id = req.params.id ;
+        const filter = {_id: new ObjectId(id)};
+        const updateData = req.body;
+        // console.log(updateData);
+        const updatedDoc = {
+          $set: {
+            ...updateData
+          }
+        }
+        const result = await categoryCollection.updateOne(filter,updatedDoc);
+        res.send(result)
+      }
+      catch(err){
         console.log(err);
       }
     })
-app.get('/category-collection/:category/:id', async(req,res) => {
-  try{
-    const id = req.params.id;
-    const query = {_id: new ObjectId(id)};
-    const result = await categoryCollection.findOne(query);
-    res.send(result)
-  }
-  catch(error){
-    console.log(error);
-  }
-})
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
