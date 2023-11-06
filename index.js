@@ -1,13 +1,21 @@
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser')
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 require('dotenv').config()
 
 // middleware
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173"
+  ],
+  credentials: true
+}));
 app.use(express.json());
+app.use(cookieParser());
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ruakr2a.mongodb.net/?retryWrites=true&w=majority`;
@@ -28,6 +36,41 @@ async function run() {
     const bookCollection = client.db('libraryDB').collection('bookCategories');
     const categoryCollection = client.db('libraryDB').collection('categoriesCollect');
     const borrowCollection = client.db('libraryDB').collection('borrowBook');
+
+
+    // auth api start 
+    app.post('/jwt', async (req, res) => {
+      try {
+        const user = req.body;
+        const token = jwt.sign(user,'token', { expiresIn:'24h'});
+        console.log(token);
+        res.cookie('token', token, {
+          httpOnly:true,
+          secure:true,
+          // sameSite:'none'
+        }).send({success:true, token})
+      }
+      catch (err) {
+        console.log(err);
+      }
+    })
+
+
+
+app.post('/logout', async(req,res) => {
+  try{
+    const user = req.body;
+    res.clearCookie('token', {maxAge:0, sameSite: 'none', secure:true}).send({success:true})
+  }
+  catch(error){
+    console.log(error);
+  }
+})
+
+
+
+
+
     // get method start 
     app.get('/book-category', async (req, res) => {
       try {
@@ -49,16 +92,16 @@ async function run() {
       }
     })
 
-    app.get('/borrow-book', async(req,res) => {
-      try{
+    app.get('/borrow-books', async (req, res) => {
+      try {
         const result = await borrowCollection.find().toArray();
         res.send(result)
       }
-      catch(error){
+      catch (error) {
         console.log(error);
       }
     })
-    
+
     // app.get('/category-collection/:id', async (req, res) => {
     //   try {
     //     const id = req.params.id;
@@ -99,37 +142,37 @@ async function run() {
     })
 
     // post method start 
-    app.post('/category-collection', async(req,res) => {
+    app.post('/category-collection', async (req, res) => {
       const addData = req.body;
       const result = await categoryCollection.insertOne(addData)
       res.send(result)
     })
 
-    app.post('/book-category', async(req,res) => {
+    app.post('/book-category', async (req, res) => {
       const addData = req.body;
       const result = await bookCollection.insertOne(addData)
       res.send(result)
     })
-    
+
     // borrow collection here 
-    app.post('/borrow-book', async(req,res) =>  {
-     try{
-      const borrowData = req.body;
-      const result = await borrowCollection.insertOne(borrowData);
-      res.send(result)
-     }
-     catch(err){
-      console.log(err);
-     }
+    app.post('/borrow-books', async (req, res) => {
+      try {
+        const borrowData = req.body;
+        const result = await borrowCollection.insertOne(borrowData);
+        res.send(result)
+      }
+      catch (err) {
+        console.log(err);
+      }
     })
 
 
     // put/patch method start 
 
-    app.put('/category-collection/:category/:id', async(req,res) => {
-      try{
-        const id = req.params.id ;
-        const filter = {_id: new ObjectId(id)};
+    app.put('/category-collection/:category/:id', async (req, res) => {
+      try {
+        const id = req.params.id;
+        const filter = { _id: new ObjectId(id) };
         const updateData = req.body;
         // console.log(updateData);
         const updatedDoc = {
@@ -137,10 +180,10 @@ async function run() {
             ...updateData
           }
         }
-        const result = await categoryCollection.updateOne(filter,updatedDoc);
+        const result = await categoryCollection.updateOne(filter, updatedDoc);
         res.send(result)
       }
-      catch(err){
+      catch (err) {
         console.log(err);
       }
     })
