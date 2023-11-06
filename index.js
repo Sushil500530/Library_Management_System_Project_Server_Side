@@ -27,6 +27,7 @@ async function run() {
     // await client.connect();
     const bookCollection = client.db('libraryDB').collection('bookCategories');
     const categoryCollection = client.db('libraryDB').collection('categoriesCollect');
+    const borrowCollection = client.db('libraryDB').collection('borrowBook');
     // get method start 
     app.get('/book-category', async (req, res) => {
       try {
@@ -45,6 +46,16 @@ async function run() {
       }
       catch (err) {
         console.log(err);
+      }
+    })
+
+    app.get('/borrow-book', async(req,res) => {
+      try{
+        const result = await borrowCollection.find().toArray();
+        res.send(result)
+      }
+      catch(error){
+        console.log(error);
       }
     })
     
@@ -86,6 +97,32 @@ async function run() {
         console.log(error);
       }
     })
+
+    // post method start 
+    app.post('/category-collection', async(req,res) => {
+      const addData = req.body;
+      const result = await categoryCollection.insertOne(addData)
+      res.send(result)
+    })
+
+    app.post('/book-category', async(req,res) => {
+      const addData = req.body;
+      const result = await bookCollection.insertOne(addData)
+      res.send(result)
+    })
+    
+    // borrow collection here 
+    app.post('/borrow-book', async(req,res) =>  {
+     try{
+      const borrowData = req.body;
+      const result = await borrowCollection.insertOne(borrowData);
+      res.send(result)
+     }
+     catch(err){
+      console.log(err);
+     }
+    })
+
 
     // put/patch method start 
 
