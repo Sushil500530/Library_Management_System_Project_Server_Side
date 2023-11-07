@@ -1,22 +1,32 @@
 [
     {
         "id": 1,
-        "thumbnail": "https://i.ibb.co/Sn1P8VK/thriller-typography-book-related-word-text-effect-t-shirt-design-528151-1733.jpg",
-        "category": "thriller"
+        "image":"https://i.ibb.co/98qpnN6/B3-CH939-SPORTS-16-H-20181108120940.jpg",
+        "category":"sport"
     },
     {
         "id": 2,
-        "thumbnail": "https://i.ibb.co/kKPwQtP/novel-book-related-word-best-text-effect-t-shirt-design-print-528151-1669.jpg",
-        "category": "novel"
+        "image":"https://i.ibb.co/44GmVTn/201660802016-01-164605056bb-01.jpg",
+        "category":"bussiness"
     },
     {
         "id": 3,
-        "thumbnail": "https://i.ibb.co/jD7qZnf/istockphoto-1092170968-2048x2048.jpg",
-        "category": "history"
+        "image":"https://i.ibb.co/CnyXjZz/social-science-books-e-books-500x500.webp",
+        "category":"social science"
     },
     {
         "id": 4,
-        "thumbnail": "https://i.ibb.co/PTV6tNC/cb9b6d5a5dcf446d5b75de33fbe55dc2.jpg",
-        "category": "drama"
+        "image":"https://i.ibb.co/Bj2BXVj/medical-book-logo-icon-design-vectorhealth-book-education-logo-designs-inspiration-2-F9-A65-N.jpg",
+        "category":"medical"
+    },
+    {
+        "id": 5,
+        "image":"https://i.ibb.co/7GRn4Fx/51bdx79-SYj-L.jpg",
+        "category":"travel"
+    },
+    {
+        "id": 6,
+        "image":"https://i.ibb.co/zX3ZWnf/Mar-2023-Webscroll-reduced.jpg",
+        "category":"teen"
     }
 ]

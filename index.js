@@ -35,10 +35,16 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     const bookCollection = client.db('libraryDB').collection('bookCategories');
+
+    const otherBookCollection = client.db('libraryDB').collection('otherCategories');
+
     const categoryCollection = client.db('libraryDB').collection('categoriesCollect');
+
+    const otherCategoryCollection = client.db('libraryDB').collection('otherCateCollection');
+
     const borrowCollection = client.db('libraryDB').collection('borrows');
 
-    const logger = async(req,res,next) => {
+    const logger = async (req, res, next) => {
       console.log('called location --->', req.host, req.originalUrl);
       next()
     }
@@ -80,21 +86,20 @@ async function run() {
     }
 
 
-    app.post('/logout', async (req, res) => {
+    // get method start 
+    app.get('/book-category', logger, async (req, res) => {
       try {
-        const user = req.body;
-        res.clearCookie('token', { maxAge: 0, sameSite: 'none', secure: true }).send({ success: true })
+        const result = await bookCollection.find().toArray();
+        res.send(result)
       }
       catch (error) {
         console.log(error);
       }
     })
-
-
-    // get method start 
-    app.get('/book-category', logger, async (req, res) => {
+    // other book category 
+    app.get('/other-category', logger, async (req, res) => {
       try {
-        const result = await bookCollection.find().toArray();
+        const result = await otherBookCollection.find().toArray();
         res.send(result)
       }
       catch (error) {
@@ -111,8 +116,18 @@ async function run() {
         console.log(err);
       }
     })
+     // other category collection 
+    app.get('/other-collection', async (req, res) => {
+      try {
+        const result = await otherCategoryCollection.find().toArray();
+        res.send(result)
+      }
+      catch (err) {
+        console.log(err);
+      }
+    })
 
-    app.get('/borrow-books',logger, verifyToken, async (req, res) => {
+    app.get('/borrow-books', logger, verifyToken, async (req, res) => {
       try {
         if (req.query?.email !== req.user?.email) {
           return res.status(403).send({ message: 'unAuthorized access keno' })
@@ -142,7 +157,6 @@ async function run() {
       }
     })
 
-
     app.get('/category-collection/:category/:id', async (req, res) => {
       try {
         const id = req.params.id;
@@ -155,7 +169,44 @@ async function run() {
       }
     })
 
+    // find category other collection by category 
+    app.get('/other-collection/:category', async (req, res) => {
+      try {
+        const category = req.params.category;
+        const query = { category: category };
+        const result = await otherCategoryCollection.find(query).toArray();
+        res.send(result)
+      }
+      catch (error) {
+        console.log(error);
+      }
+    })
+
+
+// find id for other category collection 
+    app.get('/other-collection/:category/:id', async (req, res) => {
+      try {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await otherCategoryCollection.findOne(query);
+        res.send(result)
+      }
+      catch (error) {
+        console.log(error);
+      }
+    })
+
     // post method start 
+    app.post('/logout', async (req, res) => {
+      try {
+        const user = req.body;
+        res.clearCookie('token', { maxAge: 0, sameSite: 'none', secure: true }).send({ success: true })
+      }
+      catch (error) {
+        console.log(error);
+      }
+    })
+
     app.post('/category-collection', async (req, res) => {
       const addData = req.body;
       const result = await categoryCollection.insertOne(addData)
@@ -202,6 +253,19 @@ async function run() {
       }
     })
 
+    // delete method start 
+    app.delete('/borrow-books/:id', async (req, res) => {
+      try {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await borrowCollection.deleteOne(query);
+        res.send(result)
+        console.log(id);
+      }
+      catch(error){
+        console.log(error);
+      }
+    })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -211,8 +275,6 @@ async function run() {
   }
 }
 run().catch(console.dir);
-
-
 
 
 app.get('/', (req, res) => {
