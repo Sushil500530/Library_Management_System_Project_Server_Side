@@ -18,6 +18,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 
+
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ruakr2a.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -35,44 +36,63 @@ async function run() {
     // await client.connect();
     const bookCollection = client.db('libraryDB').collection('bookCategories');
     const categoryCollection = client.db('libraryDB').collection('categoriesCollect');
-    const borrowCollection = client.db('libraryDB').collection('borrowBook');
+    const borrowCollection = client.db('libraryDB').collection('borrows');
 
+    const logger = async(req,res,next) => {
+      console.log('called location --->', req.host, req.originalUrl);
+      next()
+    }
 
     // auth api start 
-    app.post('/jwt', async (req, res) => {
+    app.post('/jwt', logger, async (req, res) => {
       try {
         const user = req.body;
-        const token = jwt.sign(user,'token', { expiresIn:'24h'});
-        console.log(token);
+        const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' });
         res.cookie('token', token, {
-          httpOnly:true,
-          secure:true,
+          httpOnly: true,
+          secure: true,
           // sameSite:'none'
-        }).send({success:true, token})
+        }).send({ success: true, token })
       }
       catch (err) {
         console.log(err);
       }
     })
 
+    // verify token 
+    const verifyToken = async (req, res, next) => {
+      try {
+        const token = req.cookies?.token;
+        if (!token) {
+          return res.status(401).send({ message: 'not authorized access' })
+        }
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, decode) => {
+          if (error) {
+            return res.status(401).send({ message: 'unAuthorized access why' })
+          }
+          req.user = decode;
+          next();
+        })
+      }
+      catch (error) {
+        console.log(error);
+      }
+    }
 
 
-app.post('/logout', async(req,res) => {
-  try{
-    const user = req.body;
-    res.clearCookie('token', {maxAge:0, sameSite: 'none', secure:true}).send({success:true})
-  }
-  catch(error){
-    console.log(error);
-  }
-})
-
-
-
+    app.post('/logout', async (req, res) => {
+      try {
+        const user = req.body;
+        res.clearCookie('token', { maxAge: 0, sameSite: 'none', secure: true }).send({ success: true })
+      }
+      catch (error) {
+        console.log(error);
+      }
+    })
 
 
     // get method start 
-    app.get('/book-category', async (req, res) => {
+    app.get('/book-category', logger, async (req, res) => {
       try {
         const result = await bookCollection.find().toArray();
         res.send(result)
@@ -92,29 +112,23 @@ app.post('/logout', async(req,res) => {
       }
     })
 
-    app.get('/borrow-books', async (req, res) => {
+    app.get('/borrow-books',logger, verifyToken, async (req, res) => {
       try {
-        const result = await borrowCollection.find().toArray();
+        if (req.query?.email !== req.user?.email) {
+          return res.status(403).send({ message: 'unAuthorized access keno' })
+        }
+        let query = {};
+        if (req.query?.email) {
+          query = { email: req.query?.email }
+        }
+        console.log(query);
+        const result = await borrowCollection.find(query).toArray();
         res.send(result)
       }
       catch (error) {
         console.log(error);
       }
     })
-
-    // app.get('/category-collection/:id', async (req, res) => {
-    //   try {
-    //     const id = req.params.id;
-    //     const query = { _id: new ObjectId(id) };
-    //     console.log('query id ',query);
-    //     const result = await categoryCollection.findOne(query)
-    //     res.send(result)
-    //   }
-    //   catch (error) {
-    //     console.log(error);
-    //   }
-    // })
-
 
     app.get('/category-collection/:category', async (req, res) => {
       try {
