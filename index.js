@@ -37,6 +37,7 @@ async function run() {
     const bookCollection = client.db('libraryDB').collection('bookCategories');
 
     const otherBookCollection = client.db('libraryDB').collection('otherCategories');
+    const other2BookCollection = client.db('libraryDB').collection('other2Categories');
 
     const categoryCollection = client.db('libraryDB').collection('categoriesCollect');
 
@@ -100,6 +101,16 @@ async function run() {
     app.get('/other-category', logger, async (req, res) => {
       try {
         const result = await otherBookCollection.find().toArray();
+        res.send(result)
+      }
+      catch (error) {
+        console.log(error);
+      }
+    })
+    // other 2 book category 
+    app.get('/other2-category', logger, async (req, res) => {
+      try {
+        const result = await other2BookCollection.find().toArray();
         res.send(result)
       }
       catch (error) {
