@@ -10,7 +10,9 @@ require('dotenv').config()
 // middleware
 app.use(cors({
   origin: [
-    "http://localhost:5173"
+    "https://five-steel.surge.sh",
+    // "https://library-a576c.firebaseapp.com",
+    // "https://library-a576c.web.app",
   ],
   credentials: true
 }));
@@ -55,9 +57,16 @@ async function run() {
       try {
         const user = req.body;
         const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' });
-        res.cookie('token', token, {
+        res.cookie(
+          "token",
+          token,
+          {
           httpOnly: true,
-          secure: true,
+          secure: process.env.NODE_ENV === "production" ? true: false,
+          sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+          
+          
+          // secure: true,
           // sameSite:'none'
         }).send({ success: true, token })
       }
@@ -120,14 +129,31 @@ async function run() {
 
     app.get('/category-collection', async (req, res) => {
       try {
-        const result = await categoryCollection.find().toArray();
+        // const queryObj = {}
+        // const sortObj = {};
+        // const sortField = req.query.sortField;
+        // const sortOrder = req.query.sortOrder;
+        // if (sortField && sortOrder) {
+        //   sortObj[sortField] = sortOrder
+        // }
+        const filter = req.query;
+        console.log(filter);
+        const query = {};
+        const option = {
+          sort : {
+            quantity:filter.sort === 'asc' ? 1 : -1
+          }
+        }
+
+
+        const result = await categoryCollection.find(query,option).toArray();
         res.send(result)
       }
       catch (err) {
         console.log(err);
       }
     })
-     // other category collection 
+    // other category collection 
     app.get('/other-collection', async (req, res) => {
       try {
         const result = await otherCategoryCollection.find().toArray();
@@ -194,7 +220,7 @@ async function run() {
     })
 
 
-// find id for other category collection 
+    // find id for other category collection 
     app.get('/other-collection/:category/:id', async (req, res) => {
       try {
         const id = req.params.id;
@@ -273,7 +299,7 @@ async function run() {
         res.send(result)
         console.log(id);
       }
-      catch(error){
+      catch (error) {
         console.log(error);
       }
     })

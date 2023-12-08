@@ -1,32 +1,35 @@
 [
     {
         "id": 1,
-        "image":"https://i.ibb.co/yFL8hBG/a-logo-for-a-health-and-fitness-company-free-vector.jpg",
-        "category":"health and fitness"
+        "image":"https://i.ibb.co/Sn1P8VK/thriller-typography-book-related-word-text-effect-t-shirt-design-528151-1733.jpg",
+        "category":"thriller"
     },
     {
         "id": 2,
-        "image":"https://i.ibb.co/LkLGQBB/cooking-book-logo-design-template-fork-suitable-restaurant-education-185355817.webp",
-        "category":"cooking"
+        "image":"https://i.ibb.co/kKPwQtP/novel-book-related-word-best-text-effect-t-shirt-design-print-528151-1669.jpg",
+        "category":"novel"
     },
     {
         "id": 3,
-        "image":"https://i.ibb.co/KGN7Mk3/depositphotos-114832990-stock-illustration-kids-book-logo-design-study.webp",
-        "category":"kids"
+        "image":"https://i.ibb.co/jD7qZnf/istockphoto-1092170968-2048x2048.jpg",
+        "category":"history"
     },
     {
         "id": 4,
-        "image":"https://i.ibb.co/nRYz1HG/egypts-book-of-mystery-slot-logo.jpg",
-        "category":"mystery"
+        "image":"https://i.ibb.co/PTV6tNC/cb9b6d5a5dcf446d5b75de33fbe55dc2.jpg",
+        "category":"drama"
     },
+   
     {
         "id": 5,
-        "image":"https://i.ibb.co/7GRn4Fx/51bdx79-SYj-L.jpg",
-        "category":"travel"
-    },
-    {
-        "id": 6,
         "image":"https://i.ibb.co/zX3ZWnf/Mar-2023-Webscroll-reduced.jpg",
         "category":"teen"
+    },
+
+
+    {
+        "id": 6,
+        "image":"https://i.ibb.co/7GRn4Fx/51bdx79-SYj-L.jpg",
+        "category":"travel"
     }
 ]
